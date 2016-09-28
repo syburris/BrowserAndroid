@@ -1,12 +1,15 @@
 package com.theironyard.browserandroid;
 
+import android.graphics.Bitmap;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     WebView web;
     Button back;
@@ -22,5 +25,36 @@ public class MainActivity extends AppCompatActivity {
         back = (Button) findViewById(R.id.back);
         web = (WebView) findViewById(R.id.web);
         forward = (Button) findViewById(R.id.forward);
+        addressBar = (EditText) findViewById(R.id.addressBar);
+        go = (Button) findViewById(R.id.go);
+
+        back.setOnClickListener(this);
+        forward.setOnClickListener(this);
+        go.setOnClickListener(this);
+
+        WebViewClient client = new WebViewClient() {
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                addressBar.setText(url);
+            }
+        };
+        web.setWebViewClient(client);
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v == back){
+            web.goBack();
+        }
+        else if (v == forward) {
+            web.goForward();
+        }
+        else if (v == go ) {
+            String url = addressBar.getText().toString();
+            if (!url.startsWith("http")) {
+                url = "http://" + url;
+            }
+            web.loadUrl(url);
+        }
     }
 }
